@@ -6,15 +6,18 @@
 #include <ctime>
 #include <vector>
 #include <string>
+#include<stack>
 
 using namespace std;
 
 // Screen dimensions
+
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 700;
 const float ROAD_SPEED = 1.0f;
 
 // Number of falling rectangles
+
 const int NUM_RECT_A = 1;
 const int NUM_RECT_C = 1;
 const int NUM_RECT_D = 1;
@@ -23,9 +26,12 @@ const int NUM_RECT_F = 1;
 const int NUM_RECT_G = 1;
 
 // Speed of falling rectangles (pixels per frame)
+
 const int RECT_SPEED = 3;
 
+
 // Function to check if two rectangles are colliding
+
 bool checkCollision(const SDL_Rect& a, const SDL_Rect& b) {
     int leftA = a.x;
     int rightA = a.x + a.w;
@@ -44,9 +50,9 @@ bool checkCollision(const SDL_Rect& a, const SDL_Rect& b) {
     return true;
 }
 
-// Function to display the menu
+
 int displayMenu(SDL_Renderer* renderer) {
-    // Load button images
+
     SDL_Surface* newGameSurface = SDL_LoadBMP("./assests/g39.bmp");
     SDL_Surface* instructionSurface = SDL_LoadBMP("./assests/g56.bmp");
     SDL_Surface* quitSurface = SDL_LoadBMP("./assests/quit.sad.bmp");
@@ -69,64 +75,65 @@ int displayMenu(SDL_Renderer* renderer) {
         return -1;
     }
 
-    // Define button rectangles
+   
     SDL_Rect newGameRect = { 300, 150, 200, 100 };
     SDL_Rect instructionRect = { 220,280, 350, 90 };
     SDL_Rect quitRect = { 270, 400, 240, 80 };
 
     // Main loop flag for menu
+
     bool quitMenu = false;
     SDL_Event e;
 
     while (!quitMenu) {
-        // Handle events on queue
+        
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
-                return 2; // Quit
+                return 2;   // Quit
             } else if (e.type == SDL_MOUSEBUTTONDOWN) {
                 int x, y;
                 SDL_GetMouseState(&x, &y);
 
                 if (x >= newGameRect.x && x <= newGameRect.x + newGameRect.w &&
                     y >= newGameRect.y && y <= newGameRect.y + newGameRect.h) {
-                    return 0; // New Game
+                    return 0;   // New Game
                 } else if (x >= instructionRect.x && x <= instructionRect.x + instructionRect.w &&
                            y >= instructionRect.y && y <= instructionRect.y + instructionRect.h) {
-                    return 1; // Instruction
+                    return 1;     // Instruction
                 } else if (x >= quitRect.x && x <= quitRect.x + quitRect.w &&
                            y >= quitRect.y && y <= quitRect.y + quitRect.h) {
-                    return 2; // Quit
+                    return 2;    // Quit
                 }
             }
         }
 
         // Clear screen
+
         SDL_SetRenderDrawColor(renderer, 45,12,188,75);
         SDL_RenderClear(renderer);
 
-        // Render buttons
         SDL_RenderCopy(renderer, newGameTexture, NULL, &newGameRect);
         SDL_RenderCopy(renderer, instructionTexture, NULL, &instructionRect);
         SDL_RenderCopy(renderer, quitTexture, NULL, &quitRect);
 
-        // Update screen
         SDL_RenderPresent(renderer);
 
-        // Add a small delay to control the frame rate
-        SDL_Delay(16); // Approximately 60 FPS
+        
+        SDL_Delay(16); 
     }
 
     SDL_DestroyTexture(newGameTexture);
     SDL_DestroyTexture(instructionTexture);
     SDL_DestroyTexture(quitTexture);
 
-    return -1; // Should not reach here
+    return -1;
 }
 
 // Function to display game over window
+
 void displayGameOver(SDL_Renderer* renderer, TTF_Font* font, int score) {
-    // Render "Game Over" text
-    SDL_Color textColor = {255, 0, 0, 255}; // Red color
+    
+    SDL_Color textColor = {255, 0, 0, 255}; 
     SDL_Surface* gameOverSurface = TTF_RenderText_Solid(font, "GAME OVER", textColor);
     SDL_Texture* gameOverTexture = SDL_CreateTextureFromSurface(renderer, gameOverSurface);
     SDL_Rect gameOverRect = {SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 50, 200, 100};
@@ -135,6 +142,7 @@ void displayGameOver(SDL_Renderer* renderer, TTF_Font* font, int score) {
     SDL_DestroyTexture(gameOverTexture);
 
     // Render score
+
     string scoreText = "Your Score: " + to_string(score);
     SDL_Surface* scoreSurface = TTF_RenderText_Solid(font, scoreText.c_str(), textColor);
     SDL_Texture* scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
@@ -143,24 +151,26 @@ void displayGameOver(SDL_Renderer* renderer, TTF_Font* font, int score) {
     SDL_FreeSurface(scoreSurface);
     SDL_DestroyTexture(scoreTexture);
 
-    // Update screen
+    
     SDL_RenderPresent(renderer);
 
-    // Delay before quitting
-    SDL_Delay(10000); // 10 seconds
+    
+    SDL_Delay(10000); 
 }
 
+// main loop
 
 int main(int argc, char* args[]) {
     srand(static_cast<unsigned int>(time(0)));
 
     // Initialize SDL
+
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
          cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() <<endl;
         return 1;
     }
 
-    // Initialize SDL_ttf
+
     if (TTF_Init() == -1) {
          cerr << "SDL_ttf could not initialize! TTF_Error: " << TTF_GetError() <<endl;
         SDL_Quit();
@@ -169,7 +179,8 @@ int main(int argc, char* args[]) {
     
 
     // Create window
-    SDL_Window* window = SDL_CreateWindow("SDL Collision Detection",
+
+    SDL_Window* window = SDL_CreateWindow("CAR GAME",
                     SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                         SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (!window) {
@@ -186,7 +197,7 @@ int main(int argc, char* args[]) {
         SDL_Quit();
         return 1;
     }
-    // Load font
+  
     TTF_Font* font = TTF_OpenFont("./assests/arial.ttf", 28);
     if (!font) {
          cerr << "Failed to load font! TTF_Error: " << TTF_GetError() <<endl;
@@ -197,14 +208,15 @@ int main(int argc, char* args[]) {
     }
 
     // Display menu
+
     int menuChoice = displayMenu(renderer);
     if (menuChoice == 2) {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
         SDL_Quit();
-        return 0; // Quit
+        return 0; 
     } else if (menuChoice == 1) {
-        // Load instruction image
+       
         SDL_Surface* instructionSurface = SDL_LoadBMP("./assests/g47.bmp");
         if (!instructionSurface) {
              cerr << "Unable to load instruction image! SDL_Error: " << SDL_GetError() <<endl;
@@ -223,24 +235,25 @@ int main(int argc, char* args[]) {
             return 1;
         }
 
-        // Display instruction image for 10 seconds
+        
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, instructionTexture, NULL, NULL);
         SDL_RenderPresent(renderer);
-        SDL_Delay(10000); // 10 seconds
+        SDL_Delay(10000);
         SDL_DestroyTexture(instructionTexture);
 
-        // Go back to menu
+        
         menuChoice = displayMenu(renderer);
         if (menuChoice == 2) {
             SDL_DestroyRenderer(renderer);
             SDL_DestroyWindow(window);
             SDL_Quit();
-            return 0; // Quit
+            return 0; 
         }
     }
 
     // Load background image
+
     SDL_Surface* bgSurface = SDL_LoadBMP("./assests/bgcrop.bmp");
     if (!bgSurface) {
          cerr << "Unable to load background image! SDL_Error: " << SDL_GetError() <<endl;
@@ -260,6 +273,7 @@ int main(int argc, char* args[]) {
     }
 
     // Load images for moving objects
+
     SDL_Surface* surfaceA = SDL_LoadBMP("./assests/Car-Black_1.bmp");
     SDL_Surface* surfaceC = SDL_LoadBMP("./assests/Car-Blue_1.bmp");
     SDL_Surface* surfaceD = SDL_LoadBMP("./assests/Car-Brown_1.bmp");
@@ -278,6 +292,7 @@ int main(int argc, char* args[]) {
     }
 
     // Create textures from surfaces
+
     SDL_Texture* textureA = SDL_CreateTextureFromSurface(renderer, surfaceA);
     SDL_Texture* textureC = SDL_CreateTextureFromSurface(renderer, surfaceC);
     SDL_Texture* textureD = SDL_CreateTextureFromSurface(renderer, surfaceD);
@@ -304,6 +319,7 @@ int main(int argc, char* args[]) {
     }
 
     // Define rectangles for the falling images
+
      vector<SDL_Rect> rectAs(NUM_RECT_A);
      vector<SDL_Rect> rectCs(NUM_RECT_C);
      vector<SDL_Rect> rectDs(NUM_RECT_D);
@@ -312,25 +328,26 @@ int main(int argc, char* args[]) {
      vector<SDL_Rect> rectGs(NUM_RECT_G);
 
     for (int i = 0; i < NUM_RECT_A; ++i) {
-        rectAs[i] = { rand() % (SCREEN_WIDTH - 100), rand() % (SCREEN_HEIGHT), 50, 80 };
+        rectAs[i] = { 0, 0, 50, 80 };
     }
     for (int i = 0; i < NUM_RECT_C; ++i) {
-        rectCs[i] = { rand() % (SCREEN_WIDTH - 100), rand() % (SCREEN_HEIGHT), 50, 80 };
+       rectCs[i] = { 150,-200, 50, 80 };
     }
     for (int i = 0; i < NUM_RECT_D; ++i) {
-        rectDs[i] = { rand() % (SCREEN_WIDTH - 100), rand() % (SCREEN_HEIGHT), 50, 80 };
+        rectDs[i] = { 400, 0, 50, 80 };
     }
     for (int i = 0; i < NUM_RECT_E; ++i) {
-        rectEs[i] = { rand() % (SCREEN_WIDTH - 100), rand() % (SCREEN_HEIGHT), 50, 80 };
+        rectEs[i] = { 380, -400, 50, 80 };
     }
     for (int i = 0; i < NUM_RECT_F; ++i) {
-        rectFs[i] = { rand() % (SCREEN_WIDTH - 100), rand() % (SCREEN_HEIGHT), 50, 80 };
+        rectFs[i] = { 500, -600, 50, 80 };
     }
     for (int i = 0; i < NUM_RECT_G; ++i) {
-        rectGs[i] = { rand() % (SCREEN_WIDTH - 100), rand() % (SCREEN_HEIGHT), 50, 80 };
+       rectGs[i] = { 700, -800, 50, 80 };
     }
 
     // Define rectangle for the controlled image
+
     SDL_Rect rectB = { 350, 500, 50, 80 };
 
     SDL_Rect roadRect1 = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -343,13 +360,15 @@ int main(int argc, char* args[]) {
     SDL_Event e;
 
 // Define text color
+
     SDL_Color textColor = {255, 255, 255, 255}; // White color
 
-    // While application is running
     // main game loop
+
     Uint32 lastUpdateTime = SDL_GetTicks();
+
     while (!quit) {
-        // Handle events on queue
+        
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 quit = true;
@@ -378,8 +397,8 @@ int main(int argc, char* args[]) {
         if (!gameOver) {
              Uint32 currentTime = SDL_GetTicks();
         Uint32 elapsedTime = currentTime - lastUpdateTime;
-        if (elapsedTime >= 60) { // 1 second
-            score += elapsedTime /60; // Increase score by number of seconds
+        if (elapsedTime >= 1000) { 
+            score += elapsedTime /1000; 
             lastUpdateTime = currentTime;
         }
             accumulatedMovement += ROAD_SPEED;
@@ -398,12 +417,14 @@ int main(int argc, char* args[]) {
             }
 
         // Move falling rectangles
+
         auto moveRectangles = []( vector<SDL_Rect>& rects) {
             for (auto& rect : rects) {
                 rect.y += RECT_SPEED;
                 if (rect.y > SCREEN_HEIGHT) {
                     rect.y = 0;
                     rect.x = rand() % (SCREEN_WIDTH - rect.w);
+                    
                 }
             }
         };
@@ -415,11 +436,11 @@ int main(int argc, char* args[]) {
         moveRectangles(rectFs);
         moveRectangles(rectGs);
        
-            // Update the score
-           // score += 1;
+
         } 
 
         // Clear screen
+
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(renderer);
 
@@ -427,6 +448,7 @@ int main(int argc, char* args[]) {
         SDL_RenderCopy(renderer, bgTexture, NULL, &roadRect2);
 
         // Render falling rectangles
+
         for (const auto& rectA : rectAs) {
             SDL_RenderCopy(renderer, textureA, NULL, &rectA);
         }
@@ -447,9 +469,11 @@ int main(int argc, char* args[]) {
         }
 
         // Render controlled rectangle
+
         SDL_RenderCopy(renderer, textureB, NULL, &rectB);
 
 // Render the score
+
          string scoreText = "Score: " +  to_string(score);
         SDL_Surface* scoreSurface = TTF_RenderText_Solid(font, scoreText.c_str(), textColor);
         SDL_Texture* scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
@@ -457,22 +481,21 @@ int main(int argc, char* args[]) {
         int textW = 0;
         int textH = 0;
         SDL_QueryTexture(scoreTexture, NULL, NULL, &textW, &textH);
-        SDL_Rect scoreRect = { 10, 10, textW, textH };
+        SDL_Rect scoreRect = { 0, 0, textW, textH };
 
         // Render score texture
+
         SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
         SDL_DestroyTexture(scoreTexture);
 
-        // Check for collision
+
+
         auto checkCollisions = [&](const  vector<SDL_Rect>& rects) {
             for (const auto& rect : rects) {
                 if (checkCollision(rect, rectB)) {
                      cout << "Collision detected!" <<endl;
-                     //cout << "!!!GAME OVER!!!" <<"\n"<<"Your Score:"<<score<<endl;
                    displayGameOver(renderer, font, score);
                    quit = true;
-                   // gameOver =true;
-                    //showGameOverWindow(score);
                     return;
                 }
             }
@@ -488,8 +511,8 @@ int main(int argc, char* args[]) {
         // Update screen
         SDL_RenderPresent(renderer);
 
-        // Add a small delay to control the frame rate
-        SDL_Delay(16); // Approximately 60 FPS
+
+       SDL_Delay(16); 
     }
 
     // Free resources and close SDL
